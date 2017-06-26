@@ -282,11 +282,13 @@ def get_class_weights(y, smooth_factor=0):
 
 def train_all(df_train, df_val, target_size=(299,299),
               model_dir="../data/inaturalist/models/",
-              image_dir="../data/inaturalist/train_val_images/",
+              image_dir="../data/inaturalist/",
               verbose=1):
     """
     Train an Inception V3.
     """
+
+    n_classes = len(set(df_train.category_id))
 
     ### Create model
     if verbose >= 1: print("Instantiating Inception V3...")
@@ -345,6 +347,6 @@ def train_all(df_train, df_val, target_size=(299,299),
 #                   Main
 #==============================================
 if __name__ == '__main__':
-    df_train = pd.read_csv("../data/inaturalist/fgvc4_iMat.train.data.csv")
-    df_val = pd.read_csv("../data/inaturalist/fgvc4_iMat.validation.data.csv")
+    df_train = pd.read_csv("../data/inaturalist/train2017.csv")
+    df_val = pd.read_csv("../data/inaturalist/val2017.csv")
     train_all(df_train, df_val)
