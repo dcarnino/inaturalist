@@ -29,7 +29,7 @@ def json_to_pandas(json_name, val_prop=0.1, verbose=1):
     # get df
     df_anno = pd.DataFrame(json_dict["annotations"])
     df_image = pd.DataFrame(json_dict["images"])
-    df = df_image.merge(df_anno, how='inner', left_on="id", right_on="image_id")["file_name", "image_id", "category_id"]
+    df = df_image.merge(df_anno, how='inner', left_on="id", right_on="image_id")[["file_name", "image_id", "category_id"]]
 
     """
     # split into train/val
