@@ -31,6 +31,7 @@ def json_to_pandas(json_name, val_prop=0.1, verbose=1):
     df_image = pd.DataFrame(json_dict["images"])
     df = df_image.merge(df_anno, how='inner', left_on="id", right_on="image_id")["file_name", "image_id", "category_id"]
 
+    """
     # split into train/val
     train_dfs, val_dfs = [], []
     categories = set(df["category_id"])
@@ -40,17 +41,15 @@ def json_to_pandas(json_name, val_prop=0.1, verbose=1):
         val_dfs.append(df_cat.iloc[:split_id])
         train_dfs.append(df_cat.iloc[split_id:])
     train_df = pd.concat(train_dfs, ignore_index=True)
-    val_df = pd.concat(val_dfs, ignore_index=True)
+    val_df = pd.concat(val_dfs, ignore_index=True)"""
 
-    return train_df, val_df
+    return df
 
 #==============================================
 #                   Main
 #==============================================
 if __name__ == '__main__':
     json_name = str(sys.argv[1])
-    train_df, val_df = json_to_pandas(json_name)
-    train_csv_name = '.'.join(json_name.split('.')[:-1])+'_train.csv'
-    val_csv_name = '.'.join(json_name.split('.')[:-1])+'_val.csv'
-    train_df.to_csv(train_csv_name, index=False, header=True)
-    val_df.to_csv(val_csv_name, index=False, header=True)
+    df = json_to_pandas(json_name)
+    csv_name = '.'.join(json_name.split('.')[:-1])+'.csv'
+    df.to_csv(csv_name, index=False, header=True)
