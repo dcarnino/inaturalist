@@ -292,7 +292,7 @@ def train_all(df_train, df_val, target_size=(299,299),
 
     ### Create model
     if verbose >= 1: print("Instantiating Inception V3...")
-    base_model, model = instantiate(n_classes, inception_json=model_dir+"inceptionv3_mod_%d.json"%tid, verbose=verbose)
+    base_model, model = instantiate(n_classes, inception_json=model_dir+"inceptionv3_mod.json", verbose=verbose)
 
     ### Load images
     if verbose >= 1: print("Loading images into RAM...")
