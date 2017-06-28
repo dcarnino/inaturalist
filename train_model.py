@@ -330,7 +330,7 @@ def train_all(df_train, df_val, target_size=(299,299),
     for df, X, y in [(df_train, X_train, y_train), (df_val, X_val, y_val)]:
         pool = mp.Pool(processes=n_jobs)
         part_size = len(df.index)//n_jobs
-        for ixx in xrange(n_jobs):
+        for ixx in range(n_jobs):
             if ixx == (n_jobs - 1):
                 df_part = df.iloc[part_size * ixx :]
             else:
