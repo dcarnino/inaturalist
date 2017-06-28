@@ -23,6 +23,7 @@ from keras.callbacks import EarlyStopping, ModelCheckpoint
 from keras.applications.imagenet_utils import decode_predictions
 from keras.optimizers import SGD
 from sklearn.preprocessing import LabelEncoder
+import multiprocessing as mp
 #==============================================
 #                   Files
 #==============================================
@@ -280,10 +281,38 @@ def get_class_weights(y, smooth_factor=0):
 
 
 
+def load_images(df, image_dir, target_size, n_classes, verbose=1):
+    """
+    Load images from df into memory.
+    """
+
+    X, y = [], []
+
+    for fn, cat in zip(df.file_name, df.category_id):
+        image_path = image_dir+fn
+        if os.path.exists(image_path):
+            try:
+                # get X
+                img = load_img(image_path, target_size=target_size)
+                arr = img_to_array(img)
+                X.append(arr)
+                # get y
+                y_lab = np.zeros((n_classes,), dtype=int)
+                y_lab[cat] = 1
+                y.append(y_lab)
+            except OSError:
+                if verbose >= 2: print("OSError on image %s."%image_path)
+
+    return X, y
+
+
+
+
+
 def train_all(df_train, df_val, target_size=(299,299),
               model_dir="../data/inaturalist/models/",
               image_dir="../data/inaturalist/",
-              verbose=1):
+              n_jobs=96, verbose=1):
     """
     Train an Inception V3.
     """
@@ -294,7 +323,23 @@ def train_all(df_train, df_val, target_size=(299,299),
     if verbose >= 1: print("Instantiating Inception V3...")
     base_model, model = instantiate(n_classes, inception_json=model_dir+"inceptionv3_mod.json", verbose=verbose)
 
-    ### Load images
+    ### Multiprocess images loading
+    X_train, y_train = [], []
+    X_val, y_val = [], []
+    for df, X, y in [(df_train, X_train, y_train), (df_val, X_val, y_val)]:
+        pool = mp.Pool(processes=n_jobs)
+        part_size = len(df.index)//n_jobs
+        for ixx in xrange(n_jobs):
+            if ixx == (n_jobs - 1):
+                df_part = df.iloc[part_size * ixx :]
+            else:
+                df_part = df.iloc[part_size * ixx : part_size * (ixx+1)]
+            pool.apply_async(load_images, (df_part, image_dir, target_size, n_classes),
+                             callback=(lambda Xy: [Z.extend(Xy[ix]) for ix,Z in enumerate([X,y])]))
+        pool.close()
+        pool.join()
+
+    """### Load images
     if verbose >= 1: print("Loading images into RAM...")
     X_train, y_train = [], []
     X_val, y_val = [], []
@@ -313,7 +358,8 @@ def train_all(df_train, df_val, target_size=(299,299),
                     y_lab[cat] = 1
                     y.append(y_lab)
                 except OSError:
-                    if verbose >= 2: print("OSError on image %s."%image_path)
+                    if verbose >= 2: print("OSError on image %s."%image_path)"""
+                    
     X_train = np.array(X_train)
     y_train = np.array(y_train)
     X_val = np.array(X_val)
