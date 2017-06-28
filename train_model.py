@@ -324,6 +324,7 @@ def train_all(df_train, df_val, target_size=(299,299),
     base_model, model = instantiate(n_classes, inception_json=model_dir+"inceptionv3_mod.json", verbose=verbose)
 
     ### Multiprocess images loading
+    if verbose >= 1: print("Loading images into RAM...")
     X_train, y_train = [], []
     X_val, y_val = [], []
     for df, X, y in [(df_train, X_train, y_train), (df_val, X_val, y_val)]:
@@ -359,7 +360,7 @@ def train_all(df_train, df_val, target_size=(299,299),
                     y.append(y_lab)
                 except OSError:
                     if verbose >= 2: print("OSError on image %s."%image_path)"""
-                    
+
     X_train = np.array(X_train)
     y_train = np.array(y_train)
     X_val = np.array(X_val)
