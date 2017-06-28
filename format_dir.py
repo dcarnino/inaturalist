@@ -21,7 +21,7 @@ import os
 #==============================================
 def format_dir(train_val_dir="../data/inaturalist/",
                target_dir="../data/inaturalist/train_images/",
-               name_csv="../data/inaturalise/train2017.csv",
+               name_csv="../data/inaturalist/train2017.csv",
                verbose=1):
     """
     Format dir into keras on-the-fly image generator format.
@@ -51,7 +51,7 @@ def format_dir(train_val_dir="../data/inaturalist/",
 if __name__ == '__main__':
     format_dir(train_val_dir="../data/inaturalist/",
                target_dir="../data/inaturalist/train_images/",
-               name_csv="../data/inaturalise/train2017.csv")
+               name_csv="../data/inaturalist/train2017.csv")
     format_dir(train_val_dir="../data/inaturalist/",
                target_dir="../data/inaturalist/val_images/",
-               name_csv="../data/inaturalise/val2017.csv")
+               name_csv="../data/inaturalist/val2017.csv")
